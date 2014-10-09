@@ -22,13 +22,32 @@ $items = array();
 
  // Get STDIN, strip whitespace and newlines,
  // and convert to uppercase if $upper is true
- function getInput($lower = false) {
+function getInput($lower = false) {
     
     if($lower) {
         return strtolower(trim(fgets(STDIN)));
     } else {
         return trim(fgets(STDIN));
     }           
+}
+function sort_menu($items) {
+    $input = getInput(true);
+    switch ($input) {
+        
+        case 'a':
+            asort($items);
+            break;
+        case 'z':    
+            arsort($items);
+            break;
+        case 'o':
+            ksort($items);
+            break;
+        case 'r':
+            krsort($items);
+            break;       
+    }    
+    return $items;
 }
          
 
@@ -42,7 +61,7 @@ do {
     }
 
     // Show the menu options
-    echo '(N)ew item, (R)emove item, (Q)uit : ';
+    echo '(N)ew item, (R)emove item, (S)ort, (Q)uit : ';
 
     // Get the input from user
     // Use trim() to remove whitespace and newlines
@@ -62,6 +81,10 @@ do {
         // Remove from array
         $key--;
         unset($items[$key]);
+    } elseif ($input == 's') {
+        echo 'Sort items: (A)-Z, (Z)-A, (O)rder entered, (R)everse order entered: ';
+        $items = sort_menu($items);
+
     }
 // Exit when input is (Q)uit
 } while ($input != 'q');
