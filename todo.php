@@ -49,7 +49,16 @@ function sort_menu($items) {
     }    
     return $items;
 }
-         
+
+function openfile($filename) {
+
+        $handle = fopen($filename, 'r');
+        $contents = fread($handle, filesize($filename));
+        $contentsArray = explode("\n", $contents);
+        fclose($handle);
+        
+        return $contentsArray;
+}
 
 // The loop!
 do {
@@ -61,31 +70,59 @@ do {
     }
 
     // Show the menu options
-    echo '(N)ew item, (R)emove item, (S)ort, (Q)uit : ';
+    echo '(N)ew item, (R)emove item, (S)ort, (O)pen, (Q)uit : ';
 
     // Get the input from user
     // Use trim() to remove whitespace and newlines
-    $input = strtolower(trim(fgets(STDIN)));
+    $input = getInput(true);
 
     // Check for actionable input
     if ($input == 'n') {
         // Ask for entry
         echo 'Enter item: ';
         // Add entry to list array
-        $items[] = trim(fgets(STDIN));
+        $newItem = getInput();
+        
+        if (empty($items)){
+            $items[] = $newItem;
+        } else {
+            echo 'Enter b if you would like it at the beginning of your list, hit enter for the bottom: ';
+            $choice = getInput(true);
+
+            if ($choice == 'b') {
+                array_unshift($items, $newItem);
+            }
+            else {
+                $items[] = $newItem;
+            }
+        }    
+
     } elseif ($input == 'r') {
         // Remove which item?
         echo 'Enter item number to remove: ';
         // Get array key
-        $key = trim(fgets(STDIN));
+        $key = getInput();
         // Remove from array
         $key--;
         unset($items[$key]);
+
     } elseif ($input == 's') {
         echo 'Sort items: (A)-Z, (Z)-A, (O)rder entered, (R)everse order entered: ';
         $items = sort_menu($items);
 
+    } elseif ($input == 'o') {
+        echo 'Open file: ';
+        $filename = getinput();
+        $open_items_array = openfile($filename);
+        $items = array_merge($items, $open_items_array);
+
+    } elseif ($input == 'f') {
+        array_shift($items);
+    } elseif ($input == 'l') {
+        array_pop($items);
     }
+
+
 // Exit when input is (Q)uit
 } while ($input != 'q');
 
