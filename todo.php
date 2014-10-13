@@ -51,13 +51,22 @@ function sort_menu($items) {
 }
 
 function openfile($filename) {
-
+        
         $handle = fopen($filename, 'r');
         $contents = fread($handle, filesize($filename));
         $contentsArray = explode("\n", $contents);
         fclose($handle);
+        return $contentsArray;      
+}
+
+function savefile($files) {
         
-        return $contentsArray;
+        $filename = getinput();
+        $handle = fopen($filename, 'w+');
+        foreach ($files as $file) {
+            fwrite($handle, $file . PHP_EOL);
+        }
+    fclose($handle);
 }
 
 // The loop!
@@ -70,7 +79,7 @@ do {
     }
 
     // Show the menu options
-    echo '(N)ew item, (R)emove item, (S)ort, (O)pen, (Q)uit : ';
+    echo '(N)ew item, (R)emove item, (S)ort, (O)pen, s(A)ve, (Q)uit : ';
 
     // Get the input from user
     // Use trim() to remove whitespace and newlines
@@ -98,7 +107,6 @@ do {
         }    
 
     } elseif ($input == 'r') {
-        // Remove which item?
         echo 'Enter item number to remove: ';
         // Get array key
         $key = getInput();
@@ -115,12 +123,18 @@ do {
         $filename = getinput();
         $open_items_array = openfile($filename);
         $items = array_merge($items, $open_items_array);
+    
+    } elseif ($input == 'a') {
+        echo 's(A)ve file to: ';
+        savefile($items);
+        echo 'saved! :D' . PHP_EOL;
 
     } elseif ($input == 'f') {
         array_shift($items);
+    
     } elseif ($input == 'l') {
         array_pop($items);
-    }
+}
 
 
 // Exit when input is (Q)uit
